@@ -58,6 +58,7 @@
         avi_credentials: "{{ avi_credentials }}"
         name: "{{ app_name }}"
         tenant: '{{ tenant_name }}'
+        ign_pool_net_reach: true
         pool_ref: "/api/pool?name={{ pool_name }}"
         cloud_ref: "/api/cloud?name={{ cloud_name }}"
         cloud_type: CLOUD_OPENSTACK
