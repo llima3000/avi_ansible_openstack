@@ -1,0 +1,53 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  
+  vars: 
+    avi_credentials:
+      controller: "10.150.0.9"
+      username: "admin"
+      password: "Avi123$%"
+      api_version: "18.1.5"
+    cloud_name: openstack
+    tenant_name: admin
+    se_group_name: "{{ tenant_name }}-SEG"
+
+  roles:
+    - role: avinetworks.avisdk
+  
+  tasks:
+    - name: Configure Service Engine Group "{{ se_group_name }}"
+      avi_serviceenginegroup:
+        avi_credentials: "{{ avi_credentials }}"
+        se_name_prefix: Avi_OS
+        auto_redistribute_active_standby_load: true
+        bgp_state_update_interval: 10
+        vs_scalein_timeout: 30
+        placement_mode: PLACEMENT_MODE_AUTO
+        max_scaleout_per_vs: 4
+        per_app: false
+        name: OpenStack-Tuned
+        tenant: "{{ tenant_name }}"
+        max_se: 100
+        realtime_se_metrics:
+            duration: 30
+            enabled: false
+        extra_config_multiplier: 0
+        async_ssl_threads: 2
+        ssl_preprocess_sni_hostname: true
+        max_cpu_usage: 80
+        min_scaleout_per_vs: 1
+        buffer_se: 1
+        significant_log_throttle: 100
+        min_se: 1
+        instance_flavor: "m1.avismall"
+        se_thread_multiplier: 2
+        max_vs_per_se: 100
+        log_disksz: 10000
+        enable_vmac: false
+        hm_on_standby: true
+        cloud_ref: '/api/cloud?name=openstack'
+        auto_rebalance: true
+        auto_rebalance_interval: 300
+        algo: PLACEMENT_ALGO_PACKED

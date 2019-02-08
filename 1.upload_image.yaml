@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  
+  tasks:
+    - name: Load Vars
+      include_vars: vars/main.yaml
+
+    - name: "Upload an image from local"
+      os_image:
+        auth:
+          auth_url: "{{ auth.auth_url }}"
+          username: "{{ auth.username }}"
+          password: "{{ auth.password }}"
+          project_name: "{{ auth.project_name }}"
+          domain_name: "{{ auth.domain_name }}"
+        name: Avi-controller-18.1.5-9249
+        container_format: bare
+        disk_format: qcow2
+        state: present
+        interface: admin
+        filename: ../imgs/controller-18.1.5-9249.qcow2
+      register: image_result
+
+    - name: "Print image ID"
+      debug:
+        msg: "{{ image_result }}"

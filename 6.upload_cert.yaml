@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  connection: local
+  roles:
+    - role: avinetworks.avisdk
+  vars:
+    avi_credentials:
+      controller: "10.150.0.9"
+      username: "admin"
+      password: "Avi123$%"
+      api_version: 18.1.5
+    key: "cert.key"
+    cert: "cert.crt"
+    cert_name: cert
+
+  tasks:
+    - name: Upload or Update SSL certificate
+      avi_sslkeyandcertificate:
+        avi_credentials: "{{ avi_credentials }}"
+        tenant: demo
+        key: "{{ lookup('file', key) }}"
+        key_passphrase: '123456'
+        certificate:
+          certificate: "{{ lookup('file', cert)}}"
+        type: SSL_CERTIFICATE_TYPE_VIRTUALSERVICE
+        name: "{{ cert_name }}"
+
+
+# ansible-playbook upload_cert_key.yaml -e "controller=192.168.0.27 username=admin password=Avi123$% cert_name=certname"
+

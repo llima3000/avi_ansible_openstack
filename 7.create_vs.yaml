@@ -1,0 +1,103 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  connection: local
+  
+  vars: 
+    avi_credentials:
+      controller: "10.150.0.9"
+      username: "admin"
+      password: "Avi123$%"
+      api_version: "18.1.5"
+    cloud_name: openstack
+    tenant_name: demo
+    app_name: Web-Demo
+    pool_name: web-pool
+    subnet_name: private
+    floating_subnet_name: public
+
+  roles:
+    - role: avinetworks.avisdk
+  
+  tasks:
+    - avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        tenant: "{{ tenant_name }}"
+        http_method: get
+        path: "cloud?name={{ cloud_name }}"
+      register: cloud_data
+
+    - avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        tenant: "{{ tenant_name }}"
+        http_method: get
+        path: networksubnetlist
+        params:
+          include_name: true
+          sort: name
+          name: "{{ subnet_name }}"
+          auto_allocate_only: true
+          cloud_uuid: "{{ cloud_data.obj.results[0].uuid}}"
+      register: subnets
+
+    - debug:
+        var: subnets
+
+    - name: Create VIP
+      avi_vsvip:
+        avi_credentials: "{{ avi_credentials }}"
+        tenant: "{{ tenant_name }}"
+        name: 'vsvip-{{ app_name }}-{{ cloud_name }}' 
+        cloud_ref: "/api/cloud?name={{ cloud_name }}"
+        vip:
+          - vip_id: '1'
+            enabled: true
+            network_uuid: "{{ subnets.obj.results[0].uuid }}"
+            subnet: 
+              mask: 24
+              ip_addr: 
+                type: "V4"
+                addr: "10.0.0.0"
+            auto_allocate_floating_ip: true
+            auto_allocate_ip: true
+
+
+    - name: Create Virtual Service
+      avi_virtualservice:
+        avi_credentials: "{{ avi_credentials }}"
+        name: "{{ app_name }}"
+        tenant: '{{ tenant_name }}'
+        pool_ref: "/api/pool?name={{ pool_name }}"
+        cloud_ref: "/api/cloud?name={{ cloud_name }}"
+        cloud_type: CLOUD_OPENSTACK
+        type: VS_TYPE_NORMAL
+        ssl_key_and_certificate_refs:
+          - '/api/sslkeyandcertificate?name=cert'
+        ssl_profile_ref: '/api/sslprofile?name=System-Standard'
+        se_group_ref: '/api/serviceenginegroup?name=Default-Group'
+        #vrf_context_ref: '/api/vrfcontext?name=demo-default'
+        application_profile_ref: '/api/applicationprofile?name=System-Secure-HTTP'
+        network_profile_ref: '/api/networkprofile?name=System-TCP-Proxy'
+        traffic_enabled: true
+        services:
+          - port: 80
+          - port: 443
+            enable_ssl: true
+        analytics_policy:
+            udf_log_throttle: 10
+            enabled: true
+            full_client_logs:
+                duration: 30
+                enabled: true
+                throttle: 10
+            metrics_realtime_update:
+                duration: 30
+                enabled: true
+            significant_log_throttle: 10
+            client_insights: ACTIVE
+            all_headers: false
+        enable_autogw: true
+        vsvip_ref: '/api/vsvip/?name=vsvip-{{ app_name }}-{{ cloud_name }}'
+
+

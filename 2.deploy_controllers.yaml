@@ -1,0 +1,161 @@
+---
+- hosts: localhost
+  connection: local
+  
+  vars: 
+    username: "admin"
+    password: "Avi123$%"
+    api_version: "18.1.5"
+    old_password: "58NFaGDJm(PJH0G"
+
+    nodes:
+    - { name: 'controller1' }
+    #- { name: 'controller2' }
+    #- { name: 'controller3' }
+
+    rules:
+    - { port: 22, protocol: 'tcp'}
+    - { port: 80, protocol: 'tcp'}
+    - { port: 443, protocol: 'tcp'}
+    - { port: 5054, protocol: 'tcp'}
+    - { port: 8443, protocol: 'tcp'}
+    - { port: 123, protocol: 'udp'}
+    - { port: -1, protocol: 'icmp'}
+
+    auth:
+      auth_url: "http://10.100.0.11:5000/v3"
+      username: avi
+      password: Avi123$%
+      project_name: avi
+      domain_name: Default
+    avi_image_name: Avi-controller-18.1.5-9249
+    flavor_name: "m1.avilarge2"
+    key_name: "llima3000"
+    security_group_name: "controllers"
+    az: nova
+
+  roles:
+    - role: avinetworks.avisdk
+  
+  tasks:
+    - name: Gather facts about avi Image "{{ avi_image_name }}"
+      os_image_facts:
+        auth: "{{ auth }}"
+        image: "{{ avi_image_name }}"
+      register: image_result
+      # var: image_result['ansible_facts']['openstack_image']['id']
+
+    - name: Gather facts about OpenStack flavor "{{ flavor_name }}" 
+      os_flavor_facts:
+        auth: "{{ auth }}"
+        name: "{{ flavor_name }}"
+      register: flavor_facts
+      # var: flavor_facts['ansible_facts']['openstack_flavors'][0]['id']
+
+    - name: Config security group for Controllers
+      os_security_group:
+        auth: "{{ auth }}"
+        state: present
+        name: "{{ security_group_name }}"
+        description: security group for foo servers
+      register: os_sec_group
+
+    - name: Config roles in security group for Controllers
+      os_security_group_rule:
+        auth: "{{ auth }}"
+        security_group: "{{ security_group_name }}"
+        direction: ingress
+        ethertype: IPv4
+        #protocol: None 
+        remote_group: "{{ security_group_name }}"
+
+    - name: Config roles in security group for Controllers
+      os_security_group_rule:
+        auth: "{{ auth }}"
+        security_group: "{{ security_group_name }}"
+        direction: ingress
+        ethertype: IPv4
+        protocol: "{{ item.protocol }}"
+        port_range_min: "{{ item.port }}"
+        port_range_max: "{{ item.port }}"
+        remote_ip_prefix: 0.0.0.0/0
+      loop: "{{ rules }}"
+
+    - name: "Launch an instance"
+      os_server:
+        state: present
+        auth: "{{ auth }}"
+        name: "{{ item.name }}"
+        availability_zone: "{{ az }}"
+        image: "{{ image_result['ansible_facts']['openstack_image']['id'] }}"
+        key_name: "{{ key_name }}"
+        timeout: 200
+        flavor: "{{ flavor_facts['ansible_facts']['openstack_flavors'][0]['id'] }}"
+        security_groups: "{{ security_group_name }}"
+        auto_ip: yes
+        nics:
+         - net-name: avi_admin
+      register: result
+      loop: "{{ nodes }}"
+
+    - debug:
+        var: result
+
+    - name: Check Controllers State
+      uri:
+        url: "https://{{ item }}/api/cluster/runtime"
+        validate_certs: false
+      register: url
+      retries: 120
+      delay: 20
+      until:
+       - "url.json is defined"
+       - "url.json['cluster_state']['state'] in ['CLUSTER_UP_HA_ACTIVE', 'CLUSTER_UP_NO_HA']"
+      ignore_errors: yes
+      with_items:
+       - "{{ result.results[0]['openstack']['interface_ip'] }}"
+       #- "{{ result.results[1]['openstack']['interface_ip'] }}"
+       #- "{{ result.results[2]['openstack']['interface_ip'] }}"
+    
+    - name: Update user password
+      avi_useraccount:
+        username: "{{ username }}"
+        password: "{{ password }}"
+        controller: "{{ result.results[0]['openstack']['interface_ip'] }}"
+        api_version: "{{ api_version }}"
+        old_password: "{{ old_password }}"
+        #old_password: "{{ password }}"
+
+    - os_port:
+        state: present
+        auth: "{{ auth }}"
+        name: avi_controller_floating_ip
+        network: avi_admin
+      register: os_port
+      # os_port['port']['fixed_ips'][0]['ip_address']
+
+    - name: Create cluster
+      avi_cluster:
+       state: present
+       controller: "{{ result.results[0]['openstack']['interface_ip'] }}"
+       username: "{{ username }}"
+       password: "{{ password }}"
+       api_version: "{{ api_version }}"
+       name: "cluster"
+       nodes:
+        - ip:
+            type: "V4"
+            addr: "{{ result.results[0]['openstack']['private_v4'] }}"
+          name: "{{ result.results[0]['openstack']['interface_ip'] }}"
+#        - ip: 
+#            type: "V4"
+#            addr: "{{ result.results[1]['openstack']['interface_ip'] }}" 
+#          name: "{{ result.results[1]['openstack']['interface_ip'] }}"
+#        - ip:
+#            type: "V4"
+#            addr: "{{ result.results[2]['openstack']['interface_ip'] }}"
+#          name: "{{ result.results[2]['openstack']['interface_ip'] }}"
+       virtual_ip: 
+         addr: "{{ os_port['port']['fixed_ips'][0]['ip_address'] }}"
+         type: V4
+
