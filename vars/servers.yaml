@@ -8,11 +8,14 @@ rules:
 - { port: 443, protocol: 'tcp'}
 - { port: -1, protocol: 'icmp'}
 
+os_project_name: Demo
+os_username: demo
+os_password: Avi123$%
 auth:
   auth_url: "http://10.100.0.11:5000/v3"
-  username: demo
-  password: Avi123$%
-  project_name: demo
+  username: "{{ os_username }}"
+  password: "{{ os_password }}"
+  project_name: '{{ os_project_name }}'
   domain_name: Default
 avi_image_name: ubuntu-xenial-server
 flavor_name: m1.tiny

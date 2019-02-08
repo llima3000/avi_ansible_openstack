@@ -16,11 +16,14 @@ security_group_name: "controllers"
 az: nova
 keystone_url: "http://10.100.0.11:5000/v3"
 
+os_project_name: avi
+os_username: avi
+os_password: Avi123$%
 auth:
   auth_url: "{{ keystone_url }}"
-  username: avi
-  password: Avi123$%
-  project_name: avi
+  username: "{{ os_username }}"
+  password: "{{ os_password }}"
+  project_name: '{{ os_project_name }}'
   domain_name: Default
 
 rules:

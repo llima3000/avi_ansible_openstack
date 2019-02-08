@@ -1,3 +1,4 @@
+# ansible-playbook X.deploy_servers.yaml -e "os_username=demo os_password=Avi123$% os_project_name=Demo"
 ---
 - hosts: localhost
   connection: local

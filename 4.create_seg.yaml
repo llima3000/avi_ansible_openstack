@@ -1,6 +1,7 @@
 ---
 - hosts: localhost
   gather_facts: no
+  
   connection: local
   
   vars_files:
@@ -21,7 +22,7 @@
         max_scaleout_per_vs: 4
         per_app: false
         name: OpenStack-Tuned
-        tenant: "{{ tenant_name }}"
+        tenant: "{{ tenant_name_admin }}"
         max_se: 100
         realtime_se_metrics:
             duration: 30

@@ -1,5 +1,7 @@
 ---
 - hosts: localhost
+  gather_facts: no
+  
   connection: local
   
   vars_files:
@@ -68,9 +70,6 @@
          - net-name: avi_admin
       register: result
       loop: "{{ nodes }}"
-
-    - debug:
-        var: result
 
     - name: Check Controllers State
       uri:
