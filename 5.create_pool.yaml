@@ -11,18 +11,17 @@
     - role: avinetworks.avisdk
   
   tasks:
+    - name: create servers to be used on Pool
+      set_fact:
+        pool_servers: "{{ pool_servers | default([]) + [{'ip': {'type': 'V4', 'addr': item }}]}}"
+      loop: "{{ addresses }}"
+
     - name: Create or Update Pool
       avi_pool:
         avi_credentials: "{{ avi_credentials }}"
         tenant: '{{ tenant_name }}'
-        name: "web-pool"
+        name: "{{ pool_name }}"
         cloud_ref: "/api/cloud?name={{ cloud_name }}"
         health_monitor_refs:
           - '/api/healthmonitor?name=System-HTTP'
-        servers:
-          - ip:
-              addr: '10.0.0.3'
-              type: 'V4'
-          - ip:
-              addr: '10.0.0.4'
-              type: 'V4'
+        servers: "{{ pool_servers }}"
