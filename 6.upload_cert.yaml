@@ -1,17 +1,12 @@
 ---
 - hosts: localhost
   connection: local
+
+  vars_files:
+    - vars/main.yaml
+
   roles:
     - role: avinetworks.avisdk
-  vars:
-    avi_credentials:
-      controller: "10.150.0.9"
-      username: "admin"
-      password: "Avi123$%"
-      api_version: 18.1.5
-    key: "cert.key"
-    cert: "cert.crt"
-    cert_name: cert
 
   tasks:
     - name: Upload or Update SSL certificate

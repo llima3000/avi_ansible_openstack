@@ -3,15 +3,8 @@
   gather_facts: no
   connection: local
   
-  vars: 
-    avi_credentials:
-      controller: "10.150.0.9"
-      username: "admin"
-      password: "Avi123$%"
-      api_version: "18.1.5"
-    cloud_name: openstack
-    tenant_name: admin
-    se_group_name: "{{ tenant_name }}-SEG"
+  vars_files:
+    - vars/main.yaml
 
   roles:
     - role: avinetworks.avisdk

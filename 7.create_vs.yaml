@@ -4,18 +4,8 @@
 
   connection: local
   
-  vars: 
-    avi_credentials:
-      controller: "10.150.0.9"
-      username: "admin"
-      password: "Avi123$%"
-      api_version: "18.1.5"
-    cloud_name: openstack
-    tenant_name: demo
-    app_name: Web-Demo
-    pool_name: web-pool
-    subnet_name: private
-    floating_subnet_name: public
+  vars_files:
+    - vars/main.yaml
 
   roles:
     - role: avinetworks.avisdk

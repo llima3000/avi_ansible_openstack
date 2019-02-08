@@ -2,14 +2,8 @@
 - hosts: localhost
   connection: local
   
-  vars: 
-    avi_credentials:
-      controller: "10.150.0.9"
-      username: "admin"
-      password: "Avi123$%"
-      api_version: "18.1.5"
-    cloud_name: openstack
-    tenant_name: demo
+  vars_files:
+    - vars/main.yaml
 
   roles:
     - role: avinetworks.avisdk

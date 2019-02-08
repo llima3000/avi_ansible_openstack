@@ -1,35 +1,9 @@
 ---
 - hosts: localhost
   connection: local
-  
-  vars: 
-    username: "admin"
-    password: "Avi123$%"
-    api_version: "18.1.5"
-    old_password: "58NFaGDJm(PJH0G"
 
-    nodes:
-    - { name: 'server01' }
-    - { name: 'server02' }
-
-    rules:
-    - { port: 22, protocol: 'tcp'}
-    - { port: 80, protocol: 'tcp'}
-    - { port: 443, protocol: 'tcp'}
-    - { port: -1, protocol: 'icmp'}
-
-    auth:
-      auth_url: "http://10.100.0.11:5000/v3"
-      username: demo
-      password: Avi123$%
-      project_name: demo
-      domain_name: Default
-    avi_image_name: ubuntu-xenial-server
-    flavor_name: m1.tiny
-    key_name: "llima3000"
-    security_group_name: "webservers"
-    az: nova
-    network_name: private
+  vars_files:
+    - vars/servers.yaml
 
   roles:
     - role: avinetworks.avisdk

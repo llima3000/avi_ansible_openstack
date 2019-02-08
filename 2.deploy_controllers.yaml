@@ -2,37 +2,8 @@
 - hosts: localhost
   connection: local
   
-  vars: 
-    username: "admin"
-    password: "Avi123$%"
-    api_version: "18.1.5"
-    old_password: "58NFaGDJm(PJH0G"
-
-    nodes:
-    - { name: 'controller1' }
-    #- { name: 'controller2' }
-    #- { name: 'controller3' }
-
-    rules:
-    - { port: 22, protocol: 'tcp'}
-    - { port: 80, protocol: 'tcp'}
-    - { port: 443, protocol: 'tcp'}
-    - { port: 5054, protocol: 'tcp'}
-    - { port: 8443, protocol: 'tcp'}
-    - { port: 123, protocol: 'udp'}
-    - { port: -1, protocol: 'icmp'}
-
-    auth:
-      auth_url: "http://10.100.0.11:5000/v3"
-      username: avi
-      password: Avi123$%
-      project_name: avi
-      domain_name: Default
-    avi_image_name: Avi-controller-18.1.5-9249
-    flavor_name: "m1.avilarge2"
-    key_name: "llima3000"
-    security_group_name: "controllers"
-    az: nova
+  vars_files:
+    - vars/main.yaml
 
   roles:
     - role: avinetworks.avisdk
