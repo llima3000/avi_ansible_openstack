@@ -1,37 +1,35 @@
-  vars: 
-    avi_credentials:
-      controller: "10.150.0.9"
-      username: "admin"
-      password: "Avi123$%"
-      api_version: "18.1.5"
+avi_credentials:
+  controller: "10.150.0.9"
+  username: "admin"
+  password: "Avi123$%"
+  api_version: "18.1.5"
 
-    auth:
-      auth_url: "http://10.100.0.11:5000/v3"
-      username: avi
-      password: Avi123$%
-      project_name: avi
-      domain_name: Default
+auth:
+  auth_url: "http://10.100.0.11:5000/v3"
+  username: avi
+  password: Avi123$%
+  project_name: avi
+  domain_name: Default
 
-    username: "admin"
-    password: "Avi123$%"
-    api_version: "18.1.5"
-    old_password: "58NFaGDJm(PJH0G"
+username: "admin"
+password: "Avi123$%"
+api_version: "18.1.5"
+old_password: "58NFaGDJm(PJH0G"
 
-    cloud_name: openstack
-    tenant_name_admin: admin
-    tenant_name: demo
-    se_group_name: "{{ tenant_name }}-SEG"
+cloud_name: openstack
+tenant_name_admin: admin
+tenant_name: demo
+se_group_name: "{{ tenant_name }}-SEG"
 
-    app_name: Web-Demo
-    pool_name: "{{ app_name }}_pool"
-    subnet_name: private
-    floating_subnet_name: public
+app_name: Web-Demo
+pool_name: "{{ app_name }}_pool"
+subnet_name: private
+floating_subnet_name: public
 
-    key: "cert.key"
-    cert: "cert.crt"
-    cert_name: cert
+key: "cert.key"
+cert: "cert.crt"
+cert_name: cert
 
-    addresses:
-      - '10.0.0.3'
-      - '10.0.0.4'
-      
+addresses:
+  - '10.0.0.3'
+  - '10.0.0.4'
