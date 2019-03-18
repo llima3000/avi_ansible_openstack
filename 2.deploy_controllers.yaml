@@ -67,7 +67,7 @@
         security_groups: "{{ security_group_name }}"
         auto_ip: yes
         nics:
-         - net-name: avi_admin
+         - net-name: "{{ os_net_name }}" 
       register: result
       loop: "{{ nodes }}"
 

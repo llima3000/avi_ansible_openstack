@@ -13,6 +13,7 @@ os_project_name: avi
 os_username: avi
 os_password: Avi123$%
 os_ip: 192.168.0.3
+os_net_name: admin
 
 avi_image_name: Avi-Controller-18.2.2-9224
 flavor_name: "m1.avilarge1"
