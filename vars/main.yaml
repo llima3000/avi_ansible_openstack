@@ -11,7 +11,7 @@ nodes:
 
 os_project_name: avi
 os_username: avi
-os_password: midom2000
+os_password: Avi123$%
 os_ip: 192.168.0.3
 
 avi_image_name: Avi-Controller-18.2.2-9224
