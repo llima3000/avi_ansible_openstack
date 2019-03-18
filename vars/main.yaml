@@ -9,16 +9,18 @@ nodes:
 #- { name: 'controller2' }
 #- { name: 'controller3' }
 
-avi_image_name: Avi-controller-18.1.5-9249
-flavor_name: "m1.avilarge2"
+os_project_name: avi
+os_username: avi
+os_password: midom2000
+os_ip: 192.168.0.3
+
+avi_image_name: Avi-Controller-18.2.2-9224
+flavor_name: "m1.avilarge1"
 key_name: "llima3000"
 security_group_name: "controllers"
 az: nova
-keystone_url: "http://10.100.0.11:5000/v3"
+keystone_url: "http://{{ os_ip }}:5000/v3"
 
-os_project_name: avi
-os_username: avi
-os_password: Avi123$%
 auth:
   auth_url: "{{ keystone_url }}"
   username: "{{ os_username }}"
