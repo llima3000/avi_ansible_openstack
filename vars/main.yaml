@@ -1,8 +1,8 @@
 avi_credentials:
-  controller: "10.150.0.9"
+  controller: "10.150.0.15"
   username: "admin"
   password: "Avi123$%"
-  api_version: "18.1.5"
+  api_version: "18.2.2"
 
 nodes:
 - { name: 'controller1' }
