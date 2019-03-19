@@ -26,7 +26,7 @@
       register: flavor_facts
       # var: flavor_facts['ansible_facts']['openstack_flavors'][0]['id']
 
-    - name: Config security group for Controllers
+    - name: Config security group for "{{ security_group_name }}"
       os_security_group:
         auth: "{{ auth }}"
         state: present
@@ -34,7 +34,7 @@
         description: security group for foo servers
       register: os_sec_group
 
-    - name: Config roles in security group for Controllers
+    - name: Config roles in security group for "{{ security_group_name }}"
       os_security_group_rule:
         auth: "{{ auth }}"
         security_group: "{{ security_group_name }}"
@@ -46,7 +46,13 @@
         remote_ip_prefix: 0.0.0.0/0
       loop: "{{ rules }}"
 
-    - name: Launch an server instance
+    - debug:
+        msg: "{{ image_result['ansible_facts']['openstack_image']['id'] }}"
+
+    - debug:
+        msg: "{{ flavor_facts['ansible_facts']['openstack_flavors'][0]['id'] }}"
+        
+    - name: Launch a server instance
       os_server:
         state: present
         auth: "{{ auth }}"
