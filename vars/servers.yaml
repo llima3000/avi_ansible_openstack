@@ -10,9 +10,12 @@ rules:
 
 os_project_name: Demo
 os_username: demo
-os_password: Avi123$%
+os_password: midom2000
+os_ip: 192.168.0.3
+keystone_url: "http://{{ os_ip }}:5000/v3"
+
 auth:
-  auth_url: "http://10.100.0.11:5000/v3"
+  auth_url: "{{ keystone_url }}"
   username: "{{ os_username }}"
   password: "{{ os_password }}"
   project_name: '{{ os_project_name }}'

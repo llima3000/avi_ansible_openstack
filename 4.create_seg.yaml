@@ -21,7 +21,7 @@
         placement_mode: PLACEMENT_MODE_AUTO
         max_scaleout_per_vs: 4
         per_app: false
-        name: OpenStack-Tuned
+        name: "{{ se_group_name }}"
         tenant: "{{ tenant_name_admin }}"
         max_se: 100
         realtime_se_metrics:
@@ -41,7 +41,7 @@
         log_disksz: 10000
         enable_vmac: false
         hm_on_standby: true
-        cloud_ref: '/api/cloud?name=openstack'
+        cloud_ref: '/api/cloud?name={{ cloud_name }}'
         auto_rebalance: true
         auto_rebalance_interval: 300
         algo: PLACEMENT_ALGO_PACKED
