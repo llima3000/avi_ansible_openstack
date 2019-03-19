@@ -47,11 +47,13 @@
       loop: "{{ rules }}"
 
     - debug:
-        msg: "{{ image_result['ansible_facts']['openstack_image']['id'] }}"
+        msg: "{{ image_result }}"
+      name: image_result
 
     - debug:
-        msg: "{{ flavor_facts['ansible_facts']['openstack_flavors'][0]['id'] }}"
-        
+        msg: "{{ flavor_facts }}"
+      name: flavor_facts
+
     - name: Launch a server instance
       os_server:
         state: present
