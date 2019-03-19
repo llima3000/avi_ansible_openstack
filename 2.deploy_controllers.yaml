@@ -100,7 +100,7 @@
         state: present
         auth: "{{ auth }}"
         name: avi_controller_floating_ip
-        network: avi_admin
+        network: "{{ os_net_name }}" 
       register: os_port
       # os_port['port']['fixed_ips'][0]['ip_address']
 
