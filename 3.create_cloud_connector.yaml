@@ -19,7 +19,7 @@
         vtype: CLOUD_OPENSTACK
         openstack_configuration:
             auth_url: 'http://{{ os_ip }}:5000/v3'
-            admin_tenant: avi
+            admin_tenant: "{{ os_project_name }}"
             name_owner: true
             map_admin_to_cloudadmin: true
             privilege: WRITE_ACCESS
