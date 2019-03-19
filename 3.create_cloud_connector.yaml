@@ -18,7 +18,7 @@
         tenant_ref: '/api/tenant/?name=admin'
         vtype: CLOUD_OPENSTACK
         openstack_configuration:
-            auth_url: 'http://{{ os_ip }}:5000/v3'
+            auth_url: "http://{{ os_ip }}:5000/v3"
             admin_tenant: "{{ os_project_name }}"
             name_owner: true
             map_admin_to_cloudadmin: true
@@ -27,7 +27,7 @@
             config_drive: true
             username: "{{ os_username }}"
             password: "{{ os_password }}"
-            insecure: true
+            insecure: false
             mgmt_network_name: "{{ os_net_name }}"
             tenant_se: false
             anti_affinity: true
