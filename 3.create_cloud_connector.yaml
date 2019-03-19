@@ -18,25 +18,25 @@
         tenant_ref: '/api/tenant/?name=admin'
         vtype: CLOUD_OPENSTACK
         openstack_configuration:
-            auth_url: 'http://10.100.0.11:5000/v3'
+            auth_url: 'http://{{ os_ip }}:5000/v3'
             admin_tenant: avi
             name_owner: true
             map_admin_to_cloudadmin: true
             privilege: WRITE_ACCESS
             free_floatingips: true
             config_drive: true
-            username: avi
-            password: 'Avi123$%'
-            insecure: false
-            mgmt_network_name: avi_admin
-            tenant_se: true
+            username: "{{ os_username }}"
+            password: "{{ os_password }}"
+            insecure: true
+            mgmt_network_name: "{{ os_net_name }}"
+            tenant_se: false
             anti_affinity: true
             use_keystone_auth: true
             import_keystone_tenants: true
             neutron_rbac: true
             hypervisor: KVM
             region: RegionOne
-            use_admin_url: true
+            use_admin_url: false
             img_format: OS_IMG_FMT_AUTO
             external_networks: false
             role_mapping:
