@@ -2,7 +2,7 @@ avi_credentials:
   controller: "10.150.0.15"
   username: "admin"
   password: "Avi123$%"
-  api_version: "18.2.2"
+  api_version: "18.2.1"
 
 nodes:
 - { name: 'controller1' }
@@ -16,10 +16,21 @@ os_ip: 192.168.0.3
 os_net_name: admin
 
 avi_image_name: Avi-Controller-18.2.2-9224
+avi_image_format: "{{ qcow2 }}"
+avi_image_filename: ../imgs/controller-18.1.5-9249.qcow2
+avi_image_interface: admin
+avi_image_containerfmt: bare
 flavor_name: "m1.avilarge1"
 key_name: "llima3000"
 security_group_name: "controllers"
 az: nova
+os_hypervisor: KVM
+os_region: RegionOne
+os_img_format: OS_IMG_FMT_AUTO
+role_map:
+- { avi_role: Tenant-Admin, os_role: admin }
+- { avi_role: Tenant-Admin, os_role: _member}
+
 keystone_url: "http://{{ os_ip }}:5000/v3"
 
 auth:
@@ -47,6 +58,15 @@ cloud_name: openstack
 tenant_name_admin: admin
 tenant_name: demo
 se_group_name: "{{ tenant_name }}-SEG"
+se_name_prefix: Avi_OS
+placement_mode: PLACEMENT_MODE_AUTO
+max_scaleout_per_vs: 4
+max_se_seg: 100
+max_vs_per_se: 100
+log_disksz: 10000
+instance_flavor: "m1.avismall"
+se_vs_placement: PLACEMENT_ALGO_PACKED
+hm_name: "System-HTTP"
 
 app_name: Web-Demo
 pool_name: "{{ app_name }}_pool"
@@ -56,7 +76,37 @@ floating_subnet_name: public
 key: "cert.key"
 cert: "cert.crt"
 cert_name: cert
+key_passphrase: '123456'
+cert_type: SSL_CERTIFICATE_TYPE_VIRTUALSERVICE
+
+vs_vip_addr: "10.0.0.0"
+auto_allocate_floating_ip: true
+auto_allocate_ip: true
+
+vs_cloud_type: CLOUD_OPENSTACK
+vs_type: VS_TYPE_NORMAL
+ssl_profile: System-Standard
+application_profile: 'System-Secure-HTTP'
+network_profile: 'System-TCP-Proxy'
+
+vs_services:
+- { port: 80 } 
+- { port: 443, enable_ssl: true }
 
 addresses:
-  - '10.0.0.3'
-  - '10.0.0.4'
+  - '10.0.0.7'
+  - '10.0.0.27'
+
+analytics_policy: {
+    udf_log_throttle: 10,
+    enabled: true,
+    full_client_logs:
+        { duration: 30,
+          enabled: true,
+          throttle: 10 },
+    metrics_realtime_update:
+        {duration: 30,
+         enabled: true },
+    significant_log_throttle: 10,
+    client_insights: ACTIVE,
+    all_headers: false }

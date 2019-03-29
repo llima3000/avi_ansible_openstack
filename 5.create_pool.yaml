@@ -23,5 +23,5 @@
         name: "{{ pool_name }}"
         cloud_ref: "/api/cloud?name={{ cloud_name }}"
         health_monitor_refs:
-          - '/api/healthmonitor?name=System-HTTP'
+          - '/api/healthmonitor?name={{ hm_name }}'
         servers: "{{ pool_servers }}"

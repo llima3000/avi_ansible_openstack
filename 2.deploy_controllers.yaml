@@ -97,7 +97,7 @@
         #old_password: "{{ password }}"
 
     - os_port:
-        state: present
+        state: "{{ state | default('present') }}"
         auth: "{{ auth }}"
         name: avi_controller_floating_ip
         network: "{{ os_net_name }}" 
@@ -106,7 +106,7 @@
 
     - name: Create cluster
       avi_cluster:
-       state: present
+       state: "{{ state | default('present') }}"
        controller: "{{ result.results[0]['openstack']['interface_ip'] }}"
        username: "{{ username }}"
        password: "{{ password }}"

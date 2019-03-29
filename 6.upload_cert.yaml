@@ -16,12 +16,11 @@
         avi_credentials: "{{ avi_credentials }}"
         tenant: demo
         key: "{{ lookup('file', key) }}"
-        key_passphrase: '123456'
+        key_passphrase: "{{ key_passphrase }}"
         certificate:
           certificate: "{{ lookup('file', cert)}}"
-        type: SSL_CERTIFICATE_TYPE_VIRTUALSERVICE
+        type: "{{ cert_type}}"
         name: "{{ cert_name }}"
-
 
 # ansible-playbook upload_cert_key.yaml -e "controller=192.168.0.27 username=admin password=Avi123$% cert_name=certname"
 

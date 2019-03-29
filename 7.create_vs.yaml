@@ -48,9 +48,9 @@
               mask: 24
               ip_addr: 
                 type: "V4"
-                addr: "10.0.0.0"
-            auto_allocate_floating_ip: true
-            auto_allocate_ip: true
+                addr: "{{ vs_vip_addr }}"
+            auto_allocate_floating_ip: "{{ auto_allocate_floating_ip }}"
+            auto_allocate_ip: "{{ auto_allocate_ip }}"
 
 
     - name: Create Virtual Service
@@ -61,34 +61,18 @@
         ign_pool_net_reach: true
         pool_ref: "/api/pool?name={{ pool_name }}"
         cloud_ref: "/api/cloud?name={{ cloud_name }}"
-        cloud_type: CLOUD_OPENSTACK
-        type: VS_TYPE_NORMAL
+        cloud_type: "{{ vs_cloud_type }}"
+        type: "{{ vs_type }}"
         ssl_key_and_certificate_refs:
-          - '/api/sslkeyandcertificate?name=cert'
-        ssl_profile_ref: '/api/sslprofile?name=System-Standard'
-        se_group_ref: '/api/serviceenginegroup?name=Default-Group'
+          - '/api/sslkeyandcertificate?name={{ cert_name }}'
+        ssl_profile_ref: '/api/sslprofile?name={{ ssl_profile }}'
+        se_group_ref: '/api/serviceenginegroup?name={{ se_group_name }}'
         #vrf_context_ref: '/api/vrfcontext?name=demo-default'
-        application_profile_ref: '/api/applicationprofile?name=System-Secure-HTTP'
-        network_profile_ref: '/api/networkprofile?name=System-TCP-Proxy'
-        traffic_enabled: true
-        services:
-          - port: 80
-          - port: 443
-            enable_ssl: true
-        analytics_policy:
-            udf_log_throttle: 10
-            enabled: true
-            full_client_logs:
-                duration: 30
-                enabled: true
-                throttle: 10
-            metrics_realtime_update:
-                duration: 30
-                enabled: true
-            significant_log_throttle: 10
-            client_insights: ACTIVE
-            all_headers: false
-        enable_autogw: true
+        application_profile_ref: '/api/applicationprofile?name={{ application_profile }}'
+        network_profile_ref: '/api/networkprofile?name={{ network_profile }}'
+        traffic_enabled: "{{ traffic_enabled | default('true') }}"
+        enabled: "{{ vs_enabled | default('true') }}"
+        services: "{{ vs_services }}"
+        analytics_policy: "{{ analytics_policy }}"
+        enable_autogw: "{{ enable_autogw | default('true') }}"
         vsvip_ref: '/api/vsvip/?name=vsvip-{{ app_name }}-{{ cloud_name }}'
-
-

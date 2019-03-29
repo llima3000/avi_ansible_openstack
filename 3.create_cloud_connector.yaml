@@ -34,18 +34,12 @@
             use_keystone_auth: true
             import_keystone_tenants: true
             neutron_rbac: true
-            hypervisor: KVM
-            region: RegionOne
+            hypervisor: "{{ os_hypervisor }}"
+            region: "{{ os_region }}"
             use_admin_url: false
-            img_format: OS_IMG_FMT_AUTO
+            img_format: "{{ os_img_format }}"
             external_networks: false
-            role_mapping:
-                - 
-                    avi_role: Tenant-Admin
-                    os_role: admin
-                - 
-                    avi_role: Tenant-Admin
-                    os_role: _member_
+            role_mapping: "{{ role_map }}"
         ip6_autocfg_enabled: true
         dhcp_enabled: true
 
