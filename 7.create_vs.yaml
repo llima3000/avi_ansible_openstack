@@ -70,7 +70,7 @@
         #vrf_context_ref: '/api/vrfcontext?name=demo-default'
         application_profile_ref: '/api/applicationprofile?name={{ application_profile }}'
         network_profile_ref: '/api/networkprofile?name={{ network_profile }}'
-        traffic_enabled: "{{ traffic_enabled | default('true') }}"
+        traffic_enabled: "{{ vs_traffic_enabled | default('true') }}"
         enabled: "{{ vs_enabled | default('true') }}"
         services: "{{ vs_services }}"
         analytics_policy: "{{ analytics_policy }}"

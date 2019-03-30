@@ -99,7 +99,6 @@ addresses:
 
 analytics_policy: {
     udf_log_throttle: 10,
-    enabled: true,
     full_client_logs:
         { duration: 30,
           enabled: true,
