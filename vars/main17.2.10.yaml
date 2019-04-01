@@ -2,7 +2,7 @@ avi_credentials:
   controller: "10.150.0.15"
   username: "admin"
   password: "Avi123$%"
-  api_version: "18.2.2"
+  api_version: "18.2.1"
 
 nodes:
 - { name: 'controller1' }
@@ -102,12 +102,10 @@ analytics_policy: {
     full_client_logs:
         { duration: 30,
           enabled: true,
-          throttle: 10 
-        },
+          throttle: 10 },
     metrics_realtime_update:
-        { duration: 30,
-         enabled: true 
-        },
+        {duration: 30,
+         enabled: true },
     significant_log_throttle: 10,
     client_insights: ACTIVE,
     all_headers: false }
