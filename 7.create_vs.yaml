@@ -31,9 +31,6 @@
           cloud_uuid: "{{ cloud_data.obj.results[0].uuid}}"
       register: subnets
 
-    - debug:
-        var: subnets
-
     - name: Create VIP
       avi_vsvip:
         avi_credentials: "{{ avi_credentials }}"

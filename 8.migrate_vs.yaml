@@ -1,0 +1,86 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  connection: local
+  
+  vars_files:
+    - vars/main.yaml
+
+  vars:
+    newip: 10.1.1.1
+    newnwip: 10.1.1.0
+    newnetmask: 24
+    newtenant: test
+    newcloud: Default-Cloud
+    newpool: "new-{{ pool_name }}"
+    newapp: "new-{{ app_name }}"
+
+  roles:
+    - role: avinetworks.avisdk
+
+  tasks:
+    - name: Get Pool for migration
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        tenant: "{{ tenant_name }}"
+        http_method: get
+        path: pool
+        params:
+          include_name: true
+          sort: name
+          name: "{{ pool_name }}"
+      register: poolobj
+
+    - name: Create or Update Pool
+      avi_pool:
+        avi_credentials: "{{ avi_credentials }}"
+        tenant: '{{ tenant_name }}'
+        name: "{{ newpool }}"
+        cloud_ref: "/api/cloud?name={{ newcloud }}"
+        health_monitor_refs: "{{ poolobj.obj.results[0].health_monitor_refs }}"
+        servers: "{{ poolobj.obj.results[0].servers }}"
+
+    - avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        tenant: "{{ tenant_name }}"
+        http_method: get
+        path: virtualservice
+        params:
+          include_name: true
+          sort: name
+          name: "{{ app_name }}"
+      register: vsobj
+
+    - name: Create VIP
+      avi_vsvip:
+        avi_credentials: "{{ avi_credentials }}"
+        tenant: "{{ tenant_name }}"
+        name: 'vsvip-{{ newapp }}-{{ newcloud }}' 
+        cloud_ref: "/api/cloud?name={{ newcloud }}"
+        vip:
+          - vip_id: '1'
+            enabled: true
+            ip_address: 
+              type: "V4"
+              addr: "{{ newip }}"
+
+    - name: Create Virtual Service
+      avi_virtualservice:
+        avi_credentials: "{{ avi_credentials }}"
+        name: "{{ newapp }}"
+        tenant: '{{ tenant_name }}'
+        pool_ref: "/api/pool?name={{ newpool }}"
+        cloud_ref: "/api/cloud?name={{ newcloud }}"
+        ssl_key_and_certificate_refs: "{{ vsobj.obj.results[0].ssl_key_and_certificate_refs }}"
+        ssl_profile_ref: "{{ vsobj.obj.results[0].ssl_profile_ref }}"
+        #se_group_ref: '/api/serviceenginegroup?name={{ se_group_name }}'
+        #vrf_context_ref: '/api/vrfcontext?name=demo-default'
+        application_profile_ref: "{{ vsobj.obj.results[0].application_profile_ref }}"
+        network_profile_ref: "{{ vsobj.obj.results[0].network_profile_ref }}"
+        services: "{{ vsobj.obj.results[0].services }}"
+        analytics_policy: "{{ vsobj.obj.results[0].analytics_policy }}"
+        enable_autogw: "{{ enable_autogw | default('true') }}"
+        #enabled: "{{ vs_enabled | default('true') }}"
+        #traffic_enabled: "{{ vs_traffic_enabled | default('true') }}"
+        vsvip_ref: '/api/vsvip/?name=vsvip-{{ newapp }}-{{ newcloud }}'
