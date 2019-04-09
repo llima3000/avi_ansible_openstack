@@ -93,6 +93,7 @@
         health_monitor_refs: "{{ poolobj.obj.results[0].health_monitor_refs }}"
         servers: "{{ poolobj.obj.results[0].servers }}"
 
+
     - name: Create Virtual Service "{{ newapp }}"
       avi_virtualservice:
         avi_credentials: "{{ avi_credentials }}"
