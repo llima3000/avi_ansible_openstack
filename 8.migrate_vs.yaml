@@ -20,7 +20,7 @@
     - role: avinetworks.avisdk
 
   tasks:
-    - name: Get Pool for migration
+    - name: Get Pool "{{ pool_name }}" for migration
       avi_api_session:
         avi_credentials: "{{ avi_credentials }}"
         tenant: "{{ tenant_name }}"
@@ -32,16 +32,8 @@
           name: "{{ pool_name }}"
       register: poolobj
 
-    - name: Create or Update Pool
-      avi_pool:
-        avi_credentials: "{{ avi_credentials }}"
-        tenant: '{{ tenant_name }}'
-        name: "{{ newpool }}"
-        cloud_ref: "/api/cloud?name={{ newcloud }}"
-        health_monitor_refs: "{{ poolobj.obj.results[0].health_monitor_refs }}"
-        servers: "{{ poolobj.obj.results[0].servers }}"
-
-    - avi_api_session:
+    - name: Get VS "{{ app_name }}" for migration
+      avi_api_session:
         avi_credentials: "{{ avi_credentials }}"
         tenant: "{{ tenant_name }}"
         http_method: get
@@ -51,6 +43,33 @@
           sort: name
           name: "{{ app_name }}"
       register: vsobj
+
+    - name: Disable VS "{{ app_name }}"
+      avi_virtualservice:
+        avi_credentials: "{{ avi_credentials }}"
+        name: "{{ app_name }}"
+        tenant: '{{ tenant_name }}'
+        avi_api_update_method: patch
+        avi_api_patch_op: add
+        enabled: false
+
+    - name: Disable Pool "{{ pool_name }}"
+      avi_pool:
+        avi_credentials: "{{ avi_credentials }}"
+        tenant: '{{ tenant_name }}'
+        name: "{{ pool_name }}"
+        avi_api_update_method: patch
+        avi_api_patch_op: add
+        enabled: false
+
+    - name: Disable VSVIP 'vsvip-{{ app_name }}-{{ cloud_name }}' 
+      avi_vsvip:
+        avi_credentials: "{{ avi_credentials }}"
+        tenant: "{{ tenant_name }}"
+        name: 'vsvip-{{ app_name }}-{{ cloud_name }}' 
+        avi_api_update_method: patch
+        avi_api_patch_op: add
+        enabled: false
 
     - name: Create VIP
       avi_vsvip:
@@ -65,7 +84,16 @@
               type: "V4"
               addr: "{{ newip }}"
 
-    - name: Create Virtual Service
+    - name: Create Pool "{{ newpool }}"
+      avi_pool:
+        avi_credentials: "{{ avi_credentials }}"
+        tenant: '{{ tenant_name }}'
+        name: "{{ newpool }}"
+        cloud_ref: "/api/cloud?name={{ newcloud }}"
+        health_monitor_refs: "{{ poolobj.obj.results[0].health_monitor_refs }}"
+        servers: "{{ poolobj.obj.results[0].servers }}"
+
+    - name: Create Virtual Service "{{ newapp }}"
       avi_virtualservice:
         avi_credentials: "{{ avi_credentials }}"
         name: "{{ newapp }}"
