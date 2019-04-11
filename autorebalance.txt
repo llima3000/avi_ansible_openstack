@@ -1,0 +1,10 @@
+min_cpu_usage: 60
+max_cpu_usage: 90
+auto_rebalance_capacity_per_se:
+    - 999999
+auto_rebalance_criteria:
+    - SE_AUTO_REBALANCE_MBPS
+auto_rebalance: true
+auto_rebalance_interval: 300
+vs_scalein_timeout: 30
+
