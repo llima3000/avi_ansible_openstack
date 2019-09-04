@@ -9,14 +9,14 @@ nodes:
 #- { name: 'controller2' }
 #- { name: 'controller3' }
 
-os_project_name: avi
-os_username: avi
-os_password: Avi123$%
+os_project_name: newAvi
+os_username: admin
+os_password: midom2000
 os_ip: 192.168.0.3
 os_net_name: admin
 
 avi_image_name: Avi-Controller-18.2.2-9224
-avi_image_format: "{{ qcow2 }}"
+avi_image_format: qcow2
 avi_image_filename: ../imgs/controller-18.1.5-9249.qcow2
 avi_image_interface: admin
 avi_image_containerfmt: bare
